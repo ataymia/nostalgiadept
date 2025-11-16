@@ -11,7 +11,7 @@ export default function SalePage() {
           🔥 MEGA SALE! 🔥
         </h1>
         <p className="text-center text-black text-xl mt-2 font-bold">
-          Don't miss these RADICAL deals!
+          Don&apos;t miss these RADICAL deals!
         </p>
       </div>
 

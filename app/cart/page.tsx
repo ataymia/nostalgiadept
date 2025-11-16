@@ -3,7 +3,6 @@
 import { useCartStore } from '@/lib/store';
 import Link from 'next/link';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
-import { loadStripe } from '@stripe/stripe-js';
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, getTotal } = useCartStore();

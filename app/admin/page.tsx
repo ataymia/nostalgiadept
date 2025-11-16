@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { mockProducts } from '@/lib/products';
 import { Product, CATEGORIES, ProductCategory } from '@/lib/types';
-import { Pencil, Trash2, Plus, Image as ImageIcon } from 'lucide-react';
+import { Pencil, Trash2, Plus } from 'lucide-react';
 
 export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>(mockProducts);
