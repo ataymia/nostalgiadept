@@ -1,4 +1,62 @@
 // ==========================================
+// Under Construction Password Protection
+// ==========================================
+const CONSTRUCTION_PASSWORD = 'ataymiadagoat';
+const CONSTRUCTION_SESSION_KEY = 'construction_access_granted';
+
+function checkConstructionAccess() {
+    // Check if access was already granted in this session
+    const accessGranted = sessionStorage.getItem(CONSTRUCTION_SESSION_KEY);
+    if (accessGranted === 'true') {
+        hideConstructionOverlay();
+    } else {
+        showConstructionOverlay();
+    }
+}
+
+function showConstructionOverlay() {
+    document.body.classList.add('construction-active');
+    const overlay = document.getElementById('constructionOverlay');
+    if (overlay) {
+        overlay.classList.remove('hidden');
+    }
+}
+
+function hideConstructionOverlay() {
+    document.body.classList.remove('construction-active');
+    const overlay = document.getElementById('constructionOverlay');
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
+}
+
+function verifyConstructionPassword() {
+    const passwordInput = document.getElementById('constructionPassword');
+    const errorDiv = document.getElementById('constructionError');
+    const enteredPassword = passwordInput.value.trim();
+    
+    if (enteredPassword === CONSTRUCTION_PASSWORD) {
+        // Grant access for this session
+        sessionStorage.setItem(CONSTRUCTION_SESSION_KEY, 'true');
+        hideConstructionOverlay();
+        errorDiv.textContent = '';
+        passwordInput.value = '';
+    } else {
+        // Show error message
+        errorDiv.textContent = '❌ Incorrect password. Try again!';
+        passwordInput.value = '';
+        passwordInput.focus();
+        
+        // Shake animation on error
+        const content = document.querySelector('.construction-content');
+        content.style.animation = 'none';
+        setTimeout(() => {
+            content.style.animation = '';
+        }, 10);
+    }
+}
+
+// ==========================================
 // State Management
 // ==========================================
 let products = [];
@@ -11,6 +69,26 @@ let searchTerm = '';
 // Initialize App
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Check construction access first
+    checkConstructionAccess();
+    
+    // Setup construction password form
+    const constructionSubmit = document.getElementById('constructionSubmit');
+    const constructionPassword = document.getElementById('constructionPassword');
+    
+    if (constructionSubmit) {
+        constructionSubmit.addEventListener('click', verifyConstructionPassword);
+    }
+    
+    if (constructionPassword) {
+        constructionPassword.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                verifyConstructionPassword();
+            }
+        });
+    }
+    
+    // Load main app
     loadProducts();
     loadCart();
     setupEventListeners();

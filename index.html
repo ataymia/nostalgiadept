@@ -11,6 +11,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Under Construction Overlay -->
+    <div class="construction-overlay" id="constructionOverlay">
+        <div class="construction-content">
+            <div class="construction-icon">🚧</div>
+            <h1 class="construction-title">UNDER CONSTRUCTION</h1>
+            <p class="construction-text">We're working hard to bring you something awesome!</p>
+            <div class="construction-password-form">
+                <input 
+                    type="password" 
+                    id="constructionPassword" 
+                    placeholder="Enter password to access site"
+                    autocomplete="off"
+                >
+                <button type="button" id="constructionSubmit" class="btn btn-primary">Enter Site</button>
+                <div class="construction-error" id="constructionError"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
