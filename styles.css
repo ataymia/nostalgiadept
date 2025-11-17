@@ -1189,3 +1189,156 @@ button {
         font-size: 0.8rem;
     }
 }
+
+/* ==========================================
+   Under Construction Overlay
+   ========================================== */
+.construction-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+}
+
+.construction-overlay.hidden {
+    display: none;
+}
+
+.construction-content {
+    text-align: center;
+    max-width: 600px;
+    background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple), var(--electric-blue));
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 5px solid var(--neon-yellow);
+    box-shadow: 0 20px 60px rgba(255, 0, 110, 0.5),
+                0 0 40px rgba(131, 56, 236, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 20px 60px rgba(255, 0, 110, 0.5),
+                    0 0 40px rgba(131, 56, 236, 0.3);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 25px 70px rgba(255, 0, 110, 0.7),
+                    0 0 50px rgba(131, 56, 236, 0.5);
+    }
+}
+
+.construction-icon {
+    font-size: 6rem;
+    margin-bottom: var(--spacing-md);
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(10deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.construction-title {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    color: var(--white);
+    text-shadow: 4px 4px 0 var(--black),
+                 -2px -2px 0 var(--neon-yellow);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 3px;
+}
+
+.construction-text {
+    font-size: 1.25rem;
+    color: var(--white);
+    margin-bottom: var(--spacing-lg);
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.construction-password-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.construction-password-form input {
+    width: 100%;
+    max-width: 400px;
+    padding: var(--spacing-md);
+    font-size: 1.1rem;
+    border: 3px solid var(--neon-yellow);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--black);
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    transition: var(--transition);
+}
+
+.construction-password-form input:focus {
+    border-color: var(--neon-teal);
+    box-shadow: 0 0 20px rgba(6, 255, 240, 0.6);
+}
+
+.construction-password-form input::placeholder {
+    color: var(--gray-mid);
+}
+
+.construction-password-form .btn {
+    max-width: 400px;
+    width: 100%;
+    font-size: 1.1rem;
+    padding: var(--spacing-md) var(--spacing-xl);
+}
+
+.construction-error {
+    color: var(--neon-yellow);
+    font-weight: 700;
+    font-size: 1rem;
+    min-height: 24px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Blur effect on page content when overlay is active */
+body.construction-active > *:not(.construction-overlay) {
+    filter: blur(10px);
+    pointer-events: none;
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .construction-title {
+        font-size: 2rem;
+    }
+    
+    .construction-text {
+        font-size: 1rem;
+    }
+    
+    .construction-icon {
+        font-size: 4rem;
+    }
+}
