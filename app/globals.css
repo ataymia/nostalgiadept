@@ -287,3 +287,47 @@ body {
   opacity: 1;
   width: auto;
 }
+
+/* Hide scrollbars but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom scrollbar for sidebar - dark theme */
+.sidebar-menu nav {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.sidebar-menu nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide body scrollbar */
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 0, 139, 0.5) transparent;
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: rgba(139, 0, 139, 0.5);
+  border-radius: 4px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 0, 139, 0.7);
+}

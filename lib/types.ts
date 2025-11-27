@@ -207,7 +207,7 @@ export const CATEGORIES: CategoryDefinition[] = [
   },
   {
     value: 'the-vault',
-    label: 'The Vault (Discontinued & Rare)',
+    label: 'The Vault',
     subcategories: [
       { value: 'vintage-toys-collectibles', label: 'Vintage Toys & Collectibles' },
       { value: 'limited-run-finds', label: 'Limited-Run Finds' },
