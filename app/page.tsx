@@ -37,67 +37,69 @@ export default function Home() {
     }));
 
   return (
-    <div className="container mx-auto px-4 py-4">
-      {/* Hero Section - More Fresh Prince/Graffiti style */}
-      <div className="mb-6 relative overflow-hidden rounded-xl border-3 border-black shadow-[6px_6px_0_#000]">
+    <div className="container mx-auto px-3 py-3">
+      {/* Hero Section - Slim & Professional */}
+      <div className="mb-4 relative overflow-hidden rounded-lg border-2 border-black shadow-[3px_3px_0_#000]">
         {/* Graffiti-style gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-cyan-400" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-400" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50" />
         
-        <div className="relative z-10 p-6 md:p-8">
-          <h1 className="text-3xl md:text-5xl font-black text-white mb-3 drop-shadow-lg" style={{ textShadow: '3px 3px 0 #000, -1px -1px 0 #ff00ff' }}>
-            TOTALLY RAD 90s VIBES! 🎉
-          </h1>
-          <p className="text-lg md:text-xl text-white font-bold mb-4 drop-shadow" style={{ textShadow: '2px 2px 0 #000' }}>
-            Step into the time machine and grab all your favorite retro gear!
-          </p>
+        <div className="relative z-10 px-5 py-4 md:py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h1 className="text-xl md:text-2xl font-black text-white drop-shadow-lg" style={{ textShadow: '2px 2px 0 #000' }}>
+              TOTALLY RAD 90s VIBES! 🎉
+            </h1>
+            <p className="text-sm md:text-base text-white/90 font-medium" style={{ textShadow: '1px 1px 0 #000' }}>
+              Step into the time machine and grab all your favorite retro gear
+            </p>
+          </div>
           <Link
             href="/category/pocket-tech-virtual-pets"
-            className="inline-block px-6 py-3 bg-yellow-400 text-black text-lg font-black rounded-lg border-3 border-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+            className="inline-block px-5 py-2 bg-yellow-400 text-black text-sm font-black rounded border-2 border-black shadow-[2px_2px_0_#000] hover:shadow-[3px_3px_0_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all whitespace-nowrap"
           >
             SHOP NOW →
           </Link>
         </div>
         
         {/* Decorative shapes */}
-        <div className="absolute top-2 right-2 text-[80px] opacity-30 transform rotate-12">🎮</div>
-        <div className="absolute bottom-2 right-16 text-[50px] opacity-20 transform -rotate-12">📼</div>
-        <div className="absolute top-1/2 right-4 w-10 h-10 bg-cyan-400 rounded-full opacity-40" />
-        <div className="absolute bottom-4 right-32 w-8 h-8 bg-yellow-400 transform rotate-45 opacity-40" />
+        <div className="absolute top-1 right-2 text-4xl opacity-20 transform rotate-12 hidden md:block">🎮</div>
+        <div className="absolute bottom-1 right-20 text-2xl opacity-15 transform -rotate-12 hidden md:block">📼</div>
       </div>
 
-      {/* Quick Category Links - Sleek horizontal scroll */}
-      <section className="mb-6">
-        <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      {/* Quick Category Links - Compact pills */}
+      <section className="mb-4">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {highlightedCategories.map((category) => (
             <Link
               key={category.href}
               href={category.href}
-              className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-sm rounded-full border-2 border-black shadow-[2px_2px_0_#000] hover:shadow-[4px_4px_0_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+              className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-purple-700/80 hover:bg-purple-600 text-white font-semibold text-xs rounded-full border border-purple-500/50 transition-all"
             >
-              <span className="text-lg">{category.emoji}</span>
+              <span>{category.emoji}</span>
               <span className="whitespace-nowrap">{category.name}</span>
             </Link>
           ))}
           <Link
             href="/sale"
-            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black text-sm rounded-full border-2 border-black shadow-[2px_2px_0_#000] hover:shadow-[4px_4px_0_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-xs rounded-full border border-yellow-600/50 transition-all"
           >
-            <span className="text-lg">🏷️</span>
+            <span>🏷️</span>
             <span className="whitespace-nowrap">SALE</span>
           </Link>
         </div>
       </section>
 
       {/* Featured Products */}
-      <section className="mb-8">
-        <div className="mb-4 bg-gradient-to-r from-pink-500 to-cyan-400 rounded-lg border-3 border-black shadow-[4px_4px_0_#000] p-3">
-          <h2 className="text-2xl md:text-3xl font-black text-white text-center" style={{ textShadow: '2px 2px 0 #000' }}>
-            🔥 FEATURED PRODUCTS 🔥
+      <section className="mb-6">
+        <div className="mb-3 flex items-center gap-2">
+          <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent via-pink-500 to-transparent"></div>
+          <h2 className="text-lg md:text-xl font-black text-white px-3" style={{ textShadow: '1px 1px 0 #000' }}>
+            🔥 FEATURED 🔥
           </h2>
+          <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
           {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
@@ -105,12 +107,8 @@ export default function Home() {
       </section>
 
       {/* Browse More CTA */}
-      <section className="text-center pb-4">
-        <p className="text-gray-400 text-sm mb-3">Want to see more? Check out all our categories in the menu! 👈</p>
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-800 text-purple-300 rounded-lg border border-purple-600 text-sm">
-          <span>←</span>
-          <span className="font-bold">Hover over the side menu to explore</span>
-        </div>
+      <section className="text-center pb-3">
+        <p className="text-gray-400 text-xs mb-2">Want more? Check the menu! 👈</p>
       </section>
     </div>
   );

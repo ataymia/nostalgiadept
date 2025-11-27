@@ -26,58 +26,58 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/product/${product.id}`}>
-      <div className="group relative bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg border-4 border-black shadow-[5px_5px_0_#000] hover:shadow-[8px_8px_0_#000] hover:translate-x-[-3px] hover:translate-y-[-3px] transition-all overflow-hidden">
+      <div className="group relative bg-[#1e1e2e] rounded-md border border-purple-800/50 hover:border-pink-500/70 shadow-sm hover:shadow-lg hover:shadow-pink-500/10 transition-all overflow-hidden">
         {/* Badges */}
-        <div className="absolute top-2 left-2 z-10 flex flex-col gap-2">
+        <div className="absolute top-1.5 left-1.5 z-10 flex flex-col gap-1">
           {hasDiscount && (
-            <span className="bg-yellow-400 text-black px-3 py-1 text-xs font-black rounded border-2 border-black shadow-[2px_2px_0_#000]">
-              SALE!
+            <span className="bg-yellow-400 text-black px-1.5 py-0.5 text-[11px] font-bold rounded">
+              SALE
             </span>
           )}
           {product.featured && (
-            <span className="bg-cyan-400 text-black px-3 py-1 text-xs font-black rounded border-2 border-black shadow-[2px_2px_0_#000]">
-              HOT!
+            <span className="bg-pink-500 text-white px-1.5 py-0.5 text-[11px] font-bold rounded">
+              HOT
             </span>
           )}
           {product.regionTag && (
-            <span className="bg-green-400 text-black px-3 py-1 text-xs font-black rounded border-2 border-black shadow-[2px_2px_0_#000]">
+            <span className="bg-green-500 text-white px-1.5 py-0.5 text-[11px] font-bold rounded">
               REGIONAL
             </span>
           )}
           {product.rarity === 'limited' && (
-            <span className="bg-purple-400 text-black px-3 py-1 text-xs font-black rounded border-2 border-black shadow-[2px_2px_0_#000]">
+            <span className="bg-purple-500 text-white px-1.5 py-0.5 text-[11px] font-bold rounded">
               LIMITED
             </span>
           )}
         </div>
 
         {/* Image Placeholder */}
-        <div className="relative w-full h-48 bg-gradient-to-br from-pink-300 to-cyan-300 flex items-center justify-center border-b-4 border-black">
-          <span className="text-6xl">📦</span>
+        <div className="relative w-full aspect-[5/4] bg-gradient-to-br from-purple-900/50 to-pink-900/30 flex items-center justify-center">
+          <span className="text-xl opacity-60">📦</span>
         </div>
 
         {/* Content */}
-        <div className="p-4 bg-white">
-          <h3 className="font-black text-lg text-black mb-2 line-clamp-2">
+        <div className="p-2.5">
+          <h3 className="font-bold text-sm text-white mb-1 line-clamp-1 group-hover:text-pink-300 transition-colors">
             {product.name}
           </h3>
-          <p className="text-gray-700 text-sm mb-3 line-clamp-2">
+          <p className="text-gray-400 text-xs mb-2 line-clamp-1">
             {description}
           </p>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div>
               {hasDiscount ? (
-                <div>
-                  <span className="text-2xl font-black text-pink-600">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-base font-black text-pink-400">
                     ${displayPrice.toFixed(2)}
                   </span>
-                  <span className="ml-2 text-sm text-gray-500 line-through">
+                  <span className="text-[11px] text-gray-500 line-through">
                     ${product.compareAtPrice!.toFixed(2)}
                   </span>
                 </div>
               ) : (
-                <span className="text-2xl font-black text-purple-600">
+                <span className="text-base font-black text-cyan-400">
                   ${displayPrice.toFixed(2)}
                 </span>
               )}
@@ -85,16 +85,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <button
               onClick={handleAddToCart}
-              className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-black rounded border-2 border-black shadow-[2px_2px_0_#000] hover:shadow-[4px_4px_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all flex items-center gap-2"
+              className="p-1.5 bg-purple-600 hover:bg-pink-500 text-white rounded transition-colors"
+              aria-label="Add to cart"
             >
-              <ShoppingCart size={16} />
-              ADD
+              <ShoppingCart size={14} />
             </button>
           </div>
 
           {product.trackInventory && product.stock < 10 && (
-            <p className="mt-2 text-xs text-red-600 font-bold">
-              Only {product.stock} left!
+            <p className="mt-1 text-[11px] text-orange-400 font-medium">
+              Only {product.stock} left
             </p>
           )}
         </div>
