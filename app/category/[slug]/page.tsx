@@ -1,6 +1,6 @@
 import ProductCard from '@/components/ProductCard';
 import { getProductsByCategory } from '@/lib/products';
-import { CATEGORIES } from '@/lib/types';
+import { CATEGORIES, ProductCategory } from '@/lib/types';
 import { notFound } from 'next/navigation';
 
 interface CategoryPageProps {
@@ -17,7 +17,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const products = getProductsByCategory(slug);
+  const products = getProductsByCategory(slug as ProductCategory);
 
   return (
     <div className="container mx-auto px-4 py-8">

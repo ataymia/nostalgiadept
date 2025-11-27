@@ -1,9 +1,32 @@
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
 import { getFeaturedProducts } from '@/lib/products';
+import { CATEGORIES } from '@/lib/types';
+
+// Map of category values to emojis
+const categoryEmojis: Record<string, string> = {
+  'pocket-tech-virtual-pets': '🎮',
+  'grow-kits-room-decor': '🌱',
+  'toys-games-fidgets': '🧸',
+  'stickers-stationery-school': '📝',
+  'vhs-analog-corner': '📼',
+  'candy-snacks-drinks': '🍬',
+  'mystery-subscription-boxes': '📦',
+  'retro-apparel-accessories': '👕',
+  'the-vault': '🔐',
+};
 
 export default function Home() {
   const featuredProducts = getFeaturedProducts();
+
+  // Build category list for grid (excluding checkout-candy-lane)
+  const displayCategories = CATEGORIES
+    .filter(cat => cat.value !== 'checkout-candy-lane')
+    .map(cat => ({
+      name: cat.label,
+      href: `/category/${cat.value}`,
+      emoji: categoryEmojis[cat.value] || '📦',
+    }));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -17,7 +40,7 @@ export default function Home() {
             Step into the time machine and grab all your favorite retro gear!
           </p>
           <Link
-            href="/category/90s-collections"
+            href="/category/pocket-tech-virtual-pets"
             className="inline-block px-8 py-4 bg-yellow-400 text-black text-xl font-black rounded-lg border-4 border-black shadow-[5px_5px_0_#000] hover:shadow-[8px_8px_0_#000] hover:translate-x-[-3px] hover:translate-y-[-3px] transition-all"
           >
             SHOP NOW →
@@ -52,17 +75,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { name: '90s Collections', href: '/category/90s-collections', emoji: '📼' },
-            { name: 'Regional Snacks', href: '/category/regional-snacks', emoji: '🌽' },
-            { name: 'Snacks', href: '/category/snacks', emoji: '🍬' },
-            { name: "Women's Apparel", href: '/category/womens-apparel', emoji: '👗' },
-            { name: "Men's Apparel", href: '/category/mens-apparel', emoji: '👔' },
-            { name: 'Shoes', href: '/category/shoes', emoji: '👟' },
-            { name: 'Toys', href: '/category/toys', emoji: '🎮' },
-            { name: 'Accessories', href: '/category/accessories', emoji: '🎒' },
-            { name: 'Sale', href: '/sale', emoji: '🏷️' },
-          ].map((category) => (
+          {displayCategories.map((category) => (
             <Link
               key={category.href}
               href={category.href}
@@ -74,6 +87,16 @@ export default function Home() {
               </h3>
             </Link>
           ))}
+          {/* Sale link */}
+          <Link
+            href="/sale"
+            className="group relative bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg border-4 border-black shadow-[5px_5px_0_#000] hover:shadow-[8px_8px_0_#000] hover:translate-x-[-3px] hover:translate-y-[-3px] transition-all p-8 text-center overflow-hidden"
+          >
+            <div className="text-6xl mb-4">🏷️</div>
+            <h3 className="text-2xl font-black text-black drop-shadow-lg">
+              Sale
+            </h3>
+          </Link>
         </div>
       </section>
     </div>

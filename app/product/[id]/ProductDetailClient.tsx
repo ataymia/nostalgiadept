@@ -1,6 +1,6 @@
 'use client';
 
-import { Product, CATEGORIES } from '@/lib/types';
+import { Product, CategoryDefinition, getSubcategoryLabel } from '@/lib/types';
 import { useCartStore } from '@/lib/store';
 import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 interface ProductDetailClientProps {
   product: Product;
-  category: typeof CATEGORIES[0] | undefined;
+  category: CategoryDefinition | undefined;
 }
 
 export default function ProductDetailClient({ product, category }: ProductDetailClientProps) {
@@ -17,9 +17,15 @@ export default function ProductDetailClient({ product, category }: ProductDetail
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  const displayPrice = product.onSale && product.salePrice
-    ? product.salePrice
-    : product.price;
+  // Use compareAtPrice for sale display, otherwise just price
+  const displayPrice = product.price;
+  const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
+  
+  // Get description - use new fields first, fall back to legacy
+  const description = product.descriptionLong || product.descriptionShort || product.description || '';
+  
+  // Get stock - use new field first, fall back to legacy
+  const stock = product.stock ?? product.inventory ?? 0;
 
   const handleAddToCart = () => {
     addItem(product, quantity);
@@ -44,7 +50,7 @@ export default function ProductDetailClient({ product, category }: ProductDetail
 
           {/* Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-2">
-            {product.onSale && (
+            {hasDiscount && (
               <span className="bg-yellow-400 text-black px-4 py-2 text-sm font-black rounded border-2 border-black shadow-[3px_3px_0_#000]">
                 SALE!
               </span>
@@ -54,9 +60,14 @@ export default function ProductDetailClient({ product, category }: ProductDetail
                 HOT!
               </span>
             )}
-            {product.isRegional && (
+            {product.regionTag && (
               <span className="bg-green-400 text-black px-4 py-2 text-sm font-black rounded border-2 border-black shadow-[3px_3px_0_#000]">
                 REGIONAL
+              </span>
+            )}
+            {product.rarity === 'limited' && (
+              <span className="bg-purple-400 text-black px-4 py-2 text-sm font-black rounded border-2 border-black shadow-[3px_3px_0_#000]">
+                LIMITED
               </span>
             )}
           </div>
@@ -68,6 +79,7 @@ export default function ProductDetailClient({ product, category }: ProductDetail
             {category && (
               <p className="text-sm font-bold text-purple-600 mb-2">
                 {category.label}
+                {product.subcategory && ` • ${getSubcategoryLabel(product.category, product.subcategory)}`}
               </p>
             )}
 
@@ -76,21 +88,21 @@ export default function ProductDetailClient({ product, category }: ProductDetail
             </h1>
 
             <p className="text-gray-700 text-lg mb-6">
-              {product.description}
+              {description}
             </p>
 
             {/* Price */}
             <div className="mb-6">
-              {product.onSale && product.salePrice ? (
+              {hasDiscount ? (
                 <div>
                   <span className="text-5xl font-black text-pink-600">
                     ${displayPrice.toFixed(2)}
                   </span>
                   <span className="ml-3 text-2xl text-gray-500 line-through">
-                    ${product.price.toFixed(2)}
+                    ${product.compareAtPrice!.toFixed(2)}
                   </span>
                   <p className="text-yellow-600 font-bold mt-2">
-                    Save ${(product.price - displayPrice).toFixed(2)}!
+                    Save ${(product.compareAtPrice! - displayPrice).toFixed(2)}!
                   </p>
                 </div>
               ) : (
@@ -102,14 +114,14 @@ export default function ProductDetailClient({ product, category }: ProductDetail
 
             {/* Inventory */}
             <div className="mb-6">
-              {product.inventory > 0 ? (
+              {stock > 0 ? (
                 <div>
                   <p className="text-green-600 font-bold mb-2">
                     ✓ In Stock
                   </p>
-                  {product.inventory < 10 && (
+                  {stock < 10 && (
                     <p className="text-red-600 font-bold">
-                      Only {product.inventory} left!
+                      Only {stock} left!
                     </p>
                   )}
                 </div>
@@ -121,7 +133,7 @@ export default function ProductDetailClient({ product, category }: ProductDetail
             </div>
 
             {/* Quantity Selector */}
-            {product.inventory > 0 && (
+            {stock > 0 && (
               <div className="mb-6">
                 <label className="block text-black font-bold mb-2">
                   Quantity:
@@ -136,13 +148,13 @@ export default function ProductDetailClient({ product, category }: ProductDetail
                   <input
                     type="number"
                     min="1"
-                    max={product.inventory}
+                    max={stock}
                     value={quantity}
-                    onChange={(e) => setQuantity(Math.max(1, Math.min(product.inventory, parseInt(e.target.value) || 1)))}
+                    onChange={(e) => setQuantity(Math.max(1, Math.min(stock, parseInt(e.target.value) || 1)))}
                     className="w-20 h-12 text-center text-2xl font-black border-4 border-black rounded"
                   />
                   <button
-                    onClick={() => setQuantity(Math.min(product.inventory, quantity + 1))}
+                    onClick={() => setQuantity(Math.min(stock, quantity + 1))}
                     className="w-12 h-12 bg-purple-500 text-white text-2xl font-black rounded border-2 border-black shadow-[2px_2px_0_#000] hover:shadow-[4px_4px_0_#000] transition-all"
                   >
                     +
@@ -152,7 +164,7 @@ export default function ProductDetailClient({ product, category }: ProductDetail
             )}
 
             {/* Add to Cart */}
-            {product.inventory > 0 && (
+            {stock > 0 && (
               <button
                 onClick={handleAddToCart}
                 className="w-full py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-black text-xl font-black rounded-lg border-4 border-black shadow-[5px_5px_0_#000] hover:shadow-[8px_8px_0_#000] hover:translate-x-[-3px] hover:translate-y-[-3px] transition-all flex items-center justify-center gap-3"
