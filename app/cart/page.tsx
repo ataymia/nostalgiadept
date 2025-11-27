@@ -3,9 +3,29 @@
 import { useCartStore } from '@/lib/store';
 import Link from 'next/link';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Product } from '@/lib/types';
+import { getUpsellProducts } from '@/lib/services/upsellService';
+import UpsellStrip from '@/components/UpsellStrip';
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, getTotal } = useCartStore();
+  const [upsellProducts, setUpsellProducts] = useState<Product[]>([]);
+
+  // Fetch upsell products when cart changes
+  useEffect(() => {
+    const fetchUpsells = async () => {
+      if (items.length > 0) {
+        const cartProductIds = items.map((item) => item.product.id);
+        const products = await getUpsellProducts(cartProductIds, 'cart');
+        setUpsellProducts(products);
+      } else {
+        setUpsellProducts([]);
+      }
+    };
+    
+    fetchUpsells();
+  }, [items]);
 
   const handleCheckout = async () => {
     // For static site, we'll show a simple alert
@@ -45,9 +65,10 @@ export default function CartPage() {
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
           {items.map((item) => {
-            const displayPrice = item.product.onSale && item.product.salePrice
-              ? item.product.salePrice
-              : item.product.price;
+            // Use compareAtPrice for sale display
+            const hasDiscount = item.product.compareAtPrice && item.product.compareAtPrice > item.product.price;
+            const displayPrice = item.product.price;
+            const description = item.product.descriptionShort || item.product.description || '';
 
             return (
               <div
@@ -68,7 +89,7 @@ export default function CartPage() {
                           {item.product.name}
                         </h3>
                         <p className="text-gray-600 text-sm">
-                          {item.product.description}
+                          {description}
                         </p>
                       </div>
                       <button
@@ -82,13 +103,13 @@ export default function CartPage() {
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       {/* Price */}
                       <div>
-                        {item.product.onSale && item.product.salePrice ? (
+                        {hasDiscount ? (
                           <div>
                             <span className="text-2xl font-black text-pink-600">
                               ${displayPrice.toFixed(2)}
                             </span>
                             <span className="ml-2 text-sm text-gray-500 line-through">
-                              ${item.product.price.toFixed(2)}
+                              ${item.product.compareAtPrice!.toFixed(2)}
                             </span>
                           </div>
                         ) : (
@@ -130,6 +151,15 @@ export default function CartPage() {
               </div>
             );
           })}
+
+          {/* Upsell Strip - "Grab a little extra nostalgia?" */}
+          {upsellProducts.length > 0 && (
+            <UpsellStrip
+              products={upsellProducts}
+              heading="Grab a little extra nostalgia?"
+              subtext="Tiny add-ons from Checkout Candy Lane – perfect to throw in the box."
+            />
+          )}
 
           <button
             onClick={clearCart}

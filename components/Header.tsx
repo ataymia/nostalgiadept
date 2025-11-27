@@ -4,21 +4,21 @@ import Link from 'next/link';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useCartStore } from '@/lib/store';
+import { CATEGORIES } from '@/lib/types';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const itemCount = useCartStore((state) => state.getItemCount());
 
+  // Build nav items from categories (excluding checkout-candy-lane which is internal)
   const navItems = [
     { label: 'Home', href: '/' },
-    { label: '90s Collections', href: '/category/90s-collections' },
-    { label: 'Regional Snacks', href: '/category/regional-snacks' },
-    { label: 'Snacks', href: '/category/snacks' },
-    { label: "Women's Apparel", href: '/category/womens-apparel' },
-    { label: "Men's Apparel", href: '/category/mens-apparel' },
-    { label: 'Shoes', href: '/category/shoes' },
-    { label: 'Toys', href: '/category/toys' },
-    { label: 'Accessories', href: '/category/accessories' },
+    ...CATEGORIES
+      .filter(cat => cat.value !== 'checkout-candy-lane')
+      .map(cat => ({
+        label: cat.label,
+        href: `/category/${cat.value}`,
+      })),
     { label: 'Sale', href: '/sale' },
   ];
 

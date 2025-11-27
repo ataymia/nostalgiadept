@@ -12,21 +12,24 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem);
 
-  const displayPrice = product.onSale && product.salePrice
-    ? product.salePrice
-    : product.price;
+  // Use compareAtPrice for sale display, otherwise just price
+  const displayPrice = product.price;
+  const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addItem(product);
   };
 
+  // Get description - use new fields first, fall back to legacy
+  const description = product.descriptionShort || product.description || '';
+
   return (
     <Link href={`/product/${product.id}`}>
       <div className="group relative bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg border-4 border-black shadow-[5px_5px_0_#000] hover:shadow-[8px_8px_0_#000] hover:translate-x-[-3px] hover:translate-y-[-3px] transition-all overflow-hidden">
         {/* Badges */}
         <div className="absolute top-2 left-2 z-10 flex flex-col gap-2">
-          {product.onSale && (
+          {hasDiscount && (
             <span className="bg-yellow-400 text-black px-3 py-1 text-xs font-black rounded border-2 border-black shadow-[2px_2px_0_#000]">
               SALE!
             </span>
@@ -36,9 +39,14 @@ export default function ProductCard({ product }: ProductCardProps) {
               HOT!
             </span>
           )}
-          {product.isRegional && (
+          {product.regionTag && (
             <span className="bg-green-400 text-black px-3 py-1 text-xs font-black rounded border-2 border-black shadow-[2px_2px_0_#000]">
               REGIONAL
+            </span>
+          )}
+          {product.rarity === 'limited' && (
+            <span className="bg-purple-400 text-black px-3 py-1 text-xs font-black rounded border-2 border-black shadow-[2px_2px_0_#000]">
+              LIMITED
             </span>
           )}
         </div>
@@ -54,18 +62,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
           <p className="text-gray-700 text-sm mb-3 line-clamp-2">
-            {product.description}
+            {description}
           </p>
 
           <div className="flex items-center justify-between">
             <div>
-              {product.onSale && product.salePrice ? (
+              {hasDiscount ? (
                 <div>
                   <span className="text-2xl font-black text-pink-600">
                     ${displayPrice.toFixed(2)}
                   </span>
                   <span className="ml-2 text-sm text-gray-500 line-through">
-                    ${product.price.toFixed(2)}
+                    ${product.compareAtPrice!.toFixed(2)}
                   </span>
                 </div>
               ) : (
@@ -84,9 +92,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             </button>
           </div>
 
-          {product.inventory < 10 && (
+          {product.trackInventory && product.stock < 10 && (
             <p className="mt-2 text-xs text-red-600 font-bold">
-              Only {product.inventory} left!
+              Only {product.stock} left!
             </p>
           )}
         </div>

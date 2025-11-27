@@ -1,36 +1,45 @@
 'use client';
 
 import { useState } from 'react';
-import { mockProducts } from '@/lib/products';
-import { Product, CATEGORIES, ProductCategory } from '@/lib/types';
+import { products as productData } from '@/lib/products';
+import { Product, CATEGORIES, ProductCategory, ProductSubcategory, getCategoryLabel, getSubcategoriesForCategory } from '@/lib/types';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 
+// Default form data for new products
+const getDefaultFormData = (): Partial<Product> => ({
+  name: '',
+  slug: '',
+  descriptionShort: '',
+  descriptionLong: '',
+  price: 0,
+  category: 'pocket-tech-virtual-pets' as ProductCategory,
+  subcategory: 'virtual-pets' as ProductSubcategory,
+  images: [],
+  stock: 0,
+  trackInventory: true,
+  isActive: true,
+  isCheckoutAddon: false,
+  rarity: 'common',
+  bundleEligible: true,
+});
+
 export default function AdminPage() {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<Product[]>(productData);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   
-  const [formData, setFormData] = useState<Partial<Product>>({
-    name: '',
-    description: '',
-    price: 0,
-    category: '90s-collections',
-    images: [],
-    inventory: 0,
-    isRegional: false,
-    featured: false,
-    onSale: false,
-    salePrice: 0,
-  });
+  const [formData, setFormData] = useState<Partial<Product>>(getDefaultFormData());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const now = new Date().toISOString();
     
     if (editingProduct) {
       // Edit existing product
       setProducts(products.map(p => 
         p.id === editingProduct.id 
-          ? { ...editingProduct, ...formData } as Product
+          ? { ...editingProduct, ...formData, updatedAt: now } as Product
           : p
       ));
       setEditingProduct(null);
@@ -39,33 +48,28 @@ export default function AdminPage() {
       const newProduct: Product = {
         id: String(Date.now()),
         name: formData.name || '',
-        description: formData.description || '',
+        slug: formData.slug || formData.name?.toLowerCase().replace(/\s+/g, '-') || '',
+        descriptionShort: formData.descriptionShort || '',
+        descriptionLong: formData.descriptionLong || '',
         price: formData.price || 0,
-        category: formData.category as ProductCategory || '90s-collections',
-        images: formData.images || [],
-        inventory: formData.inventory || 0,
-        isRegional: formData.isRegional || false,
-        featured: formData.featured || false,
-        onSale: formData.onSale || false,
-        salePrice: formData.salePrice,
+        category: formData.category as ProductCategory,
+        subcategory: formData.subcategory as ProductSubcategory,
+        images: formData.images || ['/images/products/placeholder.jpg'],
+        stock: formData.stock || 0,
+        trackInventory: formData.trackInventory ?? true,
+        isActive: formData.isActive ?? true,
+        isCheckoutAddon: formData.isCheckoutAddon ?? false,
+        rarity: formData.rarity || 'common',
+        bundleEligible: formData.bundleEligible ?? true,
+        createdAt: now,
+        updatedAt: now,
       };
       setProducts([...products, newProduct]);
       setIsAddingProduct(false);
     }
     
     // Reset form
-    setFormData({
-      name: '',
-      description: '',
-      price: 0,
-      category: '90s-collections',
-      images: [],
-      inventory: 0,
-      isRegional: false,
-      featured: false,
-      onSale: false,
-      salePrice: 0,
-    });
+    setFormData(getDefaultFormData());
   };
 
   const handleEdit = (product: Product) => {
@@ -83,17 +87,15 @@ export default function AdminPage() {
   const handleCancel = () => {
     setIsAddingProduct(false);
     setEditingProduct(null);
-    setFormData({
-      name: '',
-      description: '',
-      price: 0,
-      category: '90s-collections',
-      images: [],
-      inventory: 0,
-      isRegional: false,
-      featured: false,
-      onSale: false,
-      salePrice: 0,
+    setFormData(getDefaultFormData());
+  };
+
+  const handleCategoryChange = (category: ProductCategory) => {
+    const subcategories = getSubcategoriesForCategory(category);
+    setFormData({ 
+      ...formData, 
+      category, 
+      subcategory: subcategories[0] 
     });
   };
 
@@ -142,12 +144,27 @@ export default function AdminPage() {
 
               <div>
                 <label className="block text-black font-bold mb-2">
+                  Slug
+                </label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  className="w-full px-4 py-2 border-4 border-black rounded font-bold"
+                  placeholder="product-url-slug"
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-black font-bold mb-2">
                   Category *
                 </label>
                 <select
                   required
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value as ProductCategory })}
+                  onChange={(e) => handleCategoryChange(e.target.value as ProductCategory)}
                   className="w-full px-4 py-2 border-4 border-black rounded font-bold"
                 >
                   {CATEGORIES.map((cat) => (
@@ -157,19 +174,50 @@ export default function AdminPage() {
                   ))}
                 </select>
               </div>
+
+              <div>
+                <label className="block text-black font-bold mb-2">
+                  Subcategory *
+                </label>
+                <select
+                  required
+                  value={formData.subcategory}
+                  onChange={(e) => setFormData({ ...formData, subcategory: e.target.value as ProductSubcategory })}
+                  className="w-full px-4 py-2 border-4 border-black rounded font-bold"
+                >
+                  {CATEGORIES.find(c => c.value === formData.category)?.subcategories.map((sub) => (
+                    <option key={sub.value} value={sub.value}>
+                      {sub.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div>
               <label className="block text-black font-bold mb-2">
-                Description *
+                Short Description *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.descriptionShort}
+                onChange={(e) => setFormData({ ...formData, descriptionShort: e.target.value })}
+                className="w-full px-4 py-2 border-4 border-black rounded font-bold"
+                placeholder="Brief description for product cards"
+              />
+            </div>
+
+            <div>
+              <label className="block text-black font-bold mb-2">
+                Long Description
               </label>
               <textarea
-                required
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                value={formData.descriptionLong}
+                onChange={(e) => setFormData({ ...formData, descriptionLong: e.target.value })}
                 className="w-full px-4 py-2 border-4 border-black rounded font-bold"
                 rows={3}
-                placeholder="Enter product description"
+                placeholder="Detailed product description"
               />
             </div>
 
@@ -191,13 +239,13 @@ export default function AdminPage() {
 
               <div>
                 <label className="block text-black font-bold mb-2">
-                  Inventory *
+                  Stock *
                 </label>
                 <input
                   type="number"
                   required
-                  value={formData.inventory}
-                  onChange={(e) => setFormData({ ...formData, inventory: parseInt(e.target.value) })}
+                  value={formData.stock}
+                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
                   className="w-full px-4 py-2 border-4 border-black rounded font-bold"
                   placeholder="0"
                 />
@@ -205,16 +253,17 @@ export default function AdminPage() {
 
               <div>
                 <label className="block text-black font-bold mb-2">
-                  Sale Price ($)
+                  Rarity
                 </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={formData.salePrice || ''}
-                  onChange={(e) => setFormData({ ...formData, salePrice: parseFloat(e.target.value) || undefined })}
+                <select
+                  value={formData.rarity}
+                  onChange={(e) => setFormData({ ...formData, rarity: e.target.value as 'common' | 'hard_to_find' | 'limited' })}
                   className="w-full px-4 py-2 border-4 border-black rounded font-bold"
-                  placeholder="0.00"
-                />
+                >
+                  <option value="common">Common</option>
+                  <option value="hard_to_find">Hard to Find</option>
+                  <option value="limited">Limited</option>
+                </select>
               </div>
             </div>
 
@@ -222,31 +271,41 @@ export default function AdminPage() {
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  checked={formData.isActive}
+                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                   className="w-6 h-6 border-2 border-black"
                 />
-                <span className="font-bold">Featured Product</span>
+                <span className="font-bold">Active</span>
               </label>
 
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={formData.onSale}
-                  onChange={(e) => setFormData({ ...formData, onSale: e.target.checked })}
+                  checked={formData.isCheckoutAddon}
+                  onChange={(e) => setFormData({ ...formData, isCheckoutAddon: e.target.checked })}
                   className="w-6 h-6 border-2 border-black"
                 />
-                <span className="font-bold">On Sale</span>
+                <span className="font-bold">Checkout Add-On</span>
               </label>
 
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={formData.isRegional}
-                  onChange={(e) => setFormData({ ...formData, isRegional: e.target.checked })}
+                  checked={formData.trackInventory}
+                  onChange={(e) => setFormData({ ...formData, trackInventory: e.target.checked })}
                   className="w-6 h-6 border-2 border-black"
                 />
-                <span className="font-bold">Regional Product</span>
+                <span className="font-bold">Track Inventory</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.bundleEligible}
+                  onChange={(e) => setFormData({ ...formData, bundleEligible: e.target.checked })}
+                  className="w-6 h-6 border-2 border-black"
+                />
+                <span className="font-bold">Bundle Eligible</span>
               </label>
             </div>
 
@@ -282,7 +341,7 @@ export default function AdminPage() {
                 <th className="text-left p-3 font-black">NAME</th>
                 <th className="text-left p-3 font-black">CATEGORY</th>
                 <th className="text-left p-3 font-black">PRICE</th>
-                <th className="text-left p-3 font-black">INVENTORY</th>
+                <th className="text-left p-3 font-black">STOCK</th>
                 <th className="text-left p-3 font-black">STATUS</th>
                 <th className="text-left p-3 font-black">ACTIONS</th>
               </tr>
@@ -291,33 +350,28 @@ export default function AdminPage() {
               {products.map((product) => (
                 <tr key={product.id} className="border-b-2 border-gray-200">
                   <td className="p-3 font-bold">{product.name}</td>
-                  <td className="p-3">
-                    {CATEGORIES.find(c => c.value === product.category)?.label}
+                  <td className="p-3 text-sm">
+                    {getCategoryLabel(product.category)}
                   </td>
                   <td className="p-3 font-bold">
                     ${product.price.toFixed(2)}
-                    {product.onSale && product.salePrice && (
-                      <span className="ml-2 text-pink-600">
-                        (${product.salePrice.toFixed(2)})
-                      </span>
-                    )}
                   </td>
-                  <td className="p-3 font-bold">{product.inventory}</td>
+                  <td className="p-3 font-bold">{product.stock}</td>
                   <td className="p-3">
                     <div className="flex flex-wrap gap-1">
-                      {product.featured && (
-                        <span className="px-2 py-1 bg-cyan-400 text-black text-xs font-black rounded">
-                          HOT
-                        </span>
-                      )}
-                      {product.onSale && (
-                        <span className="px-2 py-1 bg-yellow-400 text-black text-xs font-black rounded">
-                          SALE
-                        </span>
-                      )}
-                      {product.isRegional && (
+                      {product.isActive && (
                         <span className="px-2 py-1 bg-green-400 text-black text-xs font-black rounded">
-                          REGIONAL
+                          ACTIVE
+                        </span>
+                      )}
+                      {product.isCheckoutAddon && (
+                        <span className="px-2 py-1 bg-yellow-400 text-black text-xs font-black rounded">
+                          ADD-ON
+                        </span>
+                      )}
+                      {product.rarity === 'limited' && (
+                        <span className="px-2 py-1 bg-purple-400 text-black text-xs font-black rounded">
+                          LIMITED
                         </span>
                       )}
                     </div>

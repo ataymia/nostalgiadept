@@ -4,7 +4,7 @@
  */
 
 import type { Product, ProductCategory, UpsellCandidate } from '../types';
-import { mockProducts } from '../products';
+import { products } from '../products';
 import { getUpsellConfig, type UpsellConfig, type RelevanceRule } from '../config/upsell';
 
 /**
@@ -13,12 +13,20 @@ import { getUpsellConfig, type UpsellConfig, type RelevanceRule } from '../confi
 export type UpsellContext = 'cart' | 'checkout';
 
 /**
- * Get the effective price for a product (sale price if on sale, otherwise regular price)
+ * Get the effective price for a product (compareAtPrice logic or regular price)
  */
 function getEffectivePrice(product: Product): number {
-  return product.onSale && product.salePrice !== undefined
-    ? product.salePrice
-    : product.price;
+  return product.price;
+}
+
+/**
+ * Check if a product matches any keywords in its name or description
+ */
+function matchesKeywords(product: Product, keywords?: string[]): boolean {
+  if (!keywords || keywords.length === 0) return false;
+  
+  const searchText = `${product.name} ${product.descriptionShort} ${product.descriptionLong}`.toLowerCase();
+  return keywords.some((keyword) => searchText.includes(keyword.toLowerCase()));
 }
 
 /**
@@ -37,9 +45,14 @@ function calculateRelevanceScore(
     const cartMatches = rule.cartCategories.some((cat) => cartCategories.has(cat));
     
     if (cartMatches) {
-      // Check if candidate's category is in the upsell categories for this rule
-      if (rule.upsellCategories.includes(candidate.category)) {
+      // Check if candidate's subcategory is in the upsell subcategories for this rule
+      if (rule.upsellSubcategories.includes(candidate.subcategory)) {
         score += rule.weight;
+      }
+      
+      // Check for keyword matches (bonus points)
+      if (matchesKeywords(candidate, rule.keywords)) {
+        score += 1;
       }
     }
   }
@@ -62,29 +75,32 @@ function shuffleArray<T>(array: T[]): T[] {
 
 /**
  * Filter products to get upsell-eligible candidates
+ * Only products with isCheckoutAddon = true and isActive = true are eligible
  */
 function filterUpsellCandidates(
-  products: Product[],
-  cartProductIds: string[],
-  config: UpsellConfig
+  productList: Product[],
+  cartProductIds: string[]
 ): Product[] {
   const cartIdSet = new Set(cartProductIds);
 
-  return products.filter((product) => {
+  return productList.filter((product) => {
+    // Must be a checkout addon
+    if (!product.isCheckoutAddon) {
+      return false;
+    }
+    
+    // Must be active
+    if (!product.isActive) {
+      return false;
+    }
+
     // Exclude items already in cart
     if (cartIdSet.has(product.id)) {
       return false;
     }
 
-    // Check if product is marked as checkout addon
-    // If isCheckoutAddon is explicitly false, exclude it
-    // If isCheckoutAddon is undefined or true, include it (backward compatibility)
-    if (product.isCheckoutAddon === false) {
-      return false;
-    }
-
     // Must be in stock
-    if (product.inventory <= 0) {
+    if (product.stock <= 0) {
       return false;
     }
 
@@ -123,8 +139,11 @@ function selectFromCandidates(
     return [];
   }
 
+  // Sort all candidates by price first to find the minimum
+  const sortedByPrice = [...candidates].sort((a, b) => a.effectivePrice - b.effectivePrice);
+  
   // Find minimum price
-  const minPrice = Math.min(...candidates.map((c) => c.effectivePrice));
+  const minPrice = sortedByPrice[0].effectivePrice;
   const cheapBandThreshold = minPrice + cheapBandDelta;
 
   // Split into cheap band and rest
@@ -134,7 +153,7 @@ function selectFromCandidates(
   // Sort cheap band by relevance (desc), price (asc), random tiebreaker
   const sortedCheapBand = sortCandidates(cheapBand);
   
-  // If cheap band has enough items, randomly pick N from it (considering relevance)
+  // If cheap band has enough items, select from it using relevance ordering
   if (sortedCheapBand.length >= limit) {
     // Group by relevance score
     const byRelevance = new Map<number, UpsellCandidate[]>();
@@ -176,18 +195,18 @@ function selectFromCandidates(
  * Get upsell candidates for cart/checkout display
  * 
  * Algorithm:
- * 1. Start with full product list
- * 2. Filter by is_checkout_addon and optionally category
- * 3. Exclude items already in cart
- * 4. Calculate relevance scores based on cart categories
- * 5. Sort by relevance (desc), price (asc), random tiebreaker
- * 6. Apply cheap band logic (items within minPrice + delta are prioritized)
- * 7. Return up to N items based on context
+ * 1. Start with all products where isCheckoutAddon = true and isActive = true
+ * 2. Exclude items already in cart
+ * 3. Calculate relevance scores based on cart categories
+ * 4. Sort by price ascending
+ * 5. Define cheap band (price <= minPrice + cheapBandDelta)
+ * 6. Select from cheap band first using relevance, then fill from rest
+ * 7. Return up to N items based on context (5 for cart, 3 for checkout)
  * 
  * @param cartProductIds - IDs of products currently in cart
  * @param context - 'cart' or 'checkout' (affects limit)
  * @param limit - Optional override for number of items to return
- * @param products - Optional product list (defaults to mockProducts)
+ * @param productList - Optional product list (defaults to products)
  * @param configOverrides - Optional config overrides
  * @returns Promise resolving to array of upsell candidates
  */
@@ -195,7 +214,7 @@ export async function getUpsellCandidates(
   cartProductIds: string[],
   context: UpsellContext,
   limit?: number,
-  products?: Product[],
+  productList?: Product[],
   configOverrides?: Partial<UpsellConfig>
 ): Promise<UpsellCandidate[]> {
   const config = getUpsellConfig(configOverrides);
@@ -205,8 +224,8 @@ export async function getUpsellCandidates(
     return [];
   }
 
-  // Get product list (use provided or default to mock)
-  const productList = products ?? mockProducts;
+  // Get product list (use provided or default)
+  const allProducts = productList ?? products;
 
   // Determine limit based on context
   const effectiveLimit = limit ?? (context === 'cart' 
@@ -214,13 +233,13 @@ export async function getUpsellCandidates(
     : config.maxUpsellCheckout);
 
   // Get categories from cart for relevance scoring
-  const cartProducts = productList.filter((p) => cartProductIds.includes(p.id));
+  const cartProducts = allProducts.filter((p) => cartProductIds.includes(p.id));
   const cartCategories = new Set<ProductCategory>(
     cartProducts.map((p) => p.category)
   );
 
-  // Filter to eligible candidates
-  const eligibleProducts = filterUpsellCandidates(productList, cartProductIds, config);
+  // Filter to eligible candidates (isCheckoutAddon = true, isActive = true, in stock, not in cart)
+  const eligibleProducts = filterUpsellCandidates(allProducts, cartProductIds);
 
   // Create candidates with relevance scores
   const candidates: UpsellCandidate[] = eligibleProducts.map((product) => ({
@@ -229,7 +248,7 @@ export async function getUpsellCandidates(
     effectivePrice: getEffectivePrice(product),
   }));
 
-  // Apply selection algorithm
+  // Apply selection algorithm with cheap band logic
   const selected = selectFromCandidates(candidates, effectiveLimit, config.cheapBandDelta);
 
   return selected;
@@ -246,4 +265,36 @@ export async function getUpsellProducts(
 ): Promise<Product[]> {
   const candidates = await getUpsellCandidates(cartProductIds, context, limit);
   return candidates.map((c) => c.product);
+}
+
+/**
+ * Get checkout addons for both cart and checkout pages
+ * Returns two arrays for convenience
+ */
+export async function getCheckoutAddonsForCart(
+  cartProductIds: string[],
+  configOverrides?: Partial<UpsellConfig>
+): Promise<{ cartAddons: Product[]; checkoutAddons: Product[] }> {
+  const config = getUpsellConfig(configOverrides);
+  
+  const cartCandidates = await getUpsellCandidates(
+    cartProductIds, 
+    'cart', 
+    config.maxUpsellCart,
+    undefined,
+    configOverrides
+  );
+  
+  const checkoutCandidates = await getUpsellCandidates(
+    cartProductIds, 
+    'checkout', 
+    config.maxUpsellCheckout,
+    undefined,
+    configOverrides
+  );
+  
+  return {
+    cartAddons: cartCandidates.map((c) => c.product),
+    checkoutAddons: checkoutCandidates.map((c) => c.product),
+  };
 }

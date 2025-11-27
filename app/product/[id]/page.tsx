@@ -1,4 +1,4 @@
-import { getProductById, mockProducts } from '@/lib/products';
+import { getProductById, products } from '@/lib/products';
 import { CATEGORIES } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
@@ -23,7 +23,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 }
 
 export async function generateStaticParams() {
-  return mockProducts.map((product) => ({
+  return products.map((product) => ({
     id: product.id,
   }));
 }

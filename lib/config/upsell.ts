@@ -3,19 +3,31 @@
  * Configuration for the checkout upsell (Checkout Candy Lane) feature
  */
 
-import type { ProductCategory } from '../types';
+import type { ProductCategory, ProductSubcategory } from '../types';
 
 /**
  * Relevance rule mapping for upsell scoring.
- * Maps cart product categories to relevant upsell categories with weights.
+ * Maps cart product categories to relevant upsell subcategories with weights.
  */
 export interface RelevanceRule {
   /** Categories in cart that trigger this rule */
   cartCategories: ProductCategory[];
-  /** Categories of upsell items that are relevant */
-  upsellCategories: ProductCategory[];
+  /** Subcategories of upsell items that are relevant */
+  upsellSubcategories: ProductSubcategory[];
+  /** Keywords in product name/description that boost relevance */
+  keywords?: string[];
   /** Weight/score boost for matching (higher = more relevant) */
   weight: number;
+}
+
+/**
+ * Relevance toggles for admin configuration
+ */
+export interface RelevanceToggles {
+  biasSnacksWhenCartHasSnacks: boolean;
+  biasVhsWhenCartHasVhs: boolean;
+  biasStickersWhenCartHasStationery: boolean;
+  biasToysWhenCartHasToys: boolean;
 }
 
 /**
@@ -30,57 +42,81 @@ export interface UpsellConfig {
   cheapBandDelta: number;
   /** Master switch to enable/disable upsells */
   enableUpsells: boolean;
-  /** Category filter for upsell-eligible products (if set, only these categories are considered) */
-  upsellCategory?: string;
+  /** Relevance toggles for admin UI */
+  relevanceToggles: RelevanceToggles;
   /** Relevance rules for scoring upsell candidates based on cart contents */
   relevanceRules: RelevanceRule[];
 }
 
 /**
- * Default relevance rules based on product spec:
- * - VHS & Analog Corner items pair with 90s-collections
- * - Candy/snacks pair with regional-snacks
- * - Stickers pair with accessories
- * - Toys/Pocket Tech pair with toys
+ * Default relevance rules based on the Nostalgia Dept spec:
+ * - VHS & Analog Corner → prefer movie night add-ons
+ * - Candy, Snacks & Drinks → prefer Mini Snacks add-ons
+ * - Stickers, Stationery & School → prefer Stickers & Pins add-ons
+ * - Toys, Games & Fidgets / Pocket Tech → prefer Tiny Toys & Capsules add-ons
  */
 const defaultRelevanceRules: RelevanceRule[] = [
   {
-    // VHS & Analog Corner - relevant for 90s collections
-    cartCategories: ['90s-collections'],
-    upsellCategories: ['90s-collections', 'toys'],
+    // VHS & Analog Corner - prefer movie night, snack, and capsule add-ons
+    cartCategories: ['vhs-analog-corner'],
+    upsellSubcategories: ['mini-snacks', 'tiny-toys-capsules'],
+    keywords: ['vhs', 'tape', 'movie night', 'rewind'],
     weight: 2,
   },
   {
-    // Candy pairs with snacks and regional snacks
-    cartCategories: ['snacks', 'regional-snacks'],
-    upsellCategories: ['snacks', 'regional-snacks'],
+    // Candy, Snacks & Drinks - prefer Mini Snacks add-ons
+    cartCategories: ['candy-snacks-drinks'],
+    upsellSubcategories: ['mini-snacks'],
     weight: 2,
   },
   {
-    // Stickers pair with accessories
-    cartCategories: ['accessories'],
-    upsellCategories: ['accessories', 'toys'],
+    // Stickers, Stationery & School - prefer Stickers & Pins add-ons
+    cartCategories: ['stickers-stationery-school'],
+    upsellSubcategories: ['stickers-pins'],
+    keywords: ['sticker', 'magnet', 'pen', 'eraser'],
     weight: 2,
   },
   {
-    // Toys/Pocket Tech pair with toys and 90s collections
-    cartCategories: ['toys'],
-    upsellCategories: ['toys', '90s-collections'],
+    // Toys, Games & Fidgets - prefer Tiny Toys & Capsules add-ons
+    cartCategories: ['toys-games-fidgets'],
+    upsellSubcategories: ['tiny-toys-capsules'],
     weight: 2,
   },
   {
-    // Apparel cross-sell
-    cartCategories: ['womens-apparel', 'mens-apparel'],
-    upsellCategories: ['accessories', 'shoes'],
+    // Pocket Tech & Virtual Pets - prefer Tiny Toys & Capsules add-ons
+    cartCategories: ['pocket-tech-virtual-pets'],
+    upsellSubcategories: ['tiny-toys-capsules'],
+    weight: 2,
+  },
+  {
+    // Mystery & Subscription Boxes - prefer a mix of everything
+    cartCategories: ['mystery-subscription-boxes'],
+    upsellSubcategories: ['mini-snacks', 'tiny-toys-capsules', 'stickers-pins'],
     weight: 1,
   },
   {
-    // Shoes cross-sell with apparel
-    cartCategories: ['shoes'],
-    upsellCategories: ['accessories', 'womens-apparel', 'mens-apparel'],
+    // Grow Kits & Room Décor - prefer stickers and small toys
+    cartCategories: ['grow-kits-room-decor'],
+    upsellSubcategories: ['stickers-pins', 'tiny-toys-capsules'],
+    weight: 1,
+  },
+  {
+    // Retro Apparel & Accessories - prefer pins and stickers
+    cartCategories: ['retro-apparel-accessories'],
+    upsellSubcategories: ['stickers-pins'],
     weight: 1,
   },
 ];
+
+/**
+ * Default relevance toggles
+ */
+const defaultRelevanceToggles: RelevanceToggles = {
+  biasSnacksWhenCartHasSnacks: true,
+  biasVhsWhenCartHasVhs: true,
+  biasStickersWhenCartHasStationery: true,
+  biasToysWhenCartHasToys: true,
+};
 
 /**
  * Default upsell configuration
@@ -91,7 +127,7 @@ export const defaultUpsellConfig: UpsellConfig = {
   maxUpsellCheckout: parseInt(process.env.MAX_UPSELL_CHECKOUT || '3', 10),
   cheapBandDelta: parseFloat(process.env.CHEAP_BAND_DELTA || '3.00'),
   enableUpsells: process.env.ENABLE_UPSELLS !== 'false',
-  upsellCategory: process.env.UPSELL_CATEGORY || 'Checkout Candy Lane',
+  relevanceToggles: defaultRelevanceToggles,
   relevanceRules: defaultRelevanceRules,
 };
 
