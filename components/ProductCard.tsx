@@ -30,22 +30,22 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Badges */}
         <div className="absolute top-1.5 left-1.5 z-10 flex flex-col gap-1">
           {hasDiscount && (
-            <span className="bg-yellow-400 text-black px-1.5 py-0.5 text-[10px] font-bold rounded">
+            <span className="bg-yellow-400 text-black px-1.5 py-0.5 text-[11px] font-bold rounded">
               SALE
             </span>
           )}
           {product.featured && (
-            <span className="bg-pink-500 text-white px-1.5 py-0.5 text-[10px] font-bold rounded">
+            <span className="bg-pink-500 text-white px-1.5 py-0.5 text-[11px] font-bold rounded">
               HOT
             </span>
           )}
           {product.regionTag && (
-            <span className="bg-green-500 text-white px-1.5 py-0.5 text-[10px] font-bold rounded">
+            <span className="bg-green-500 text-white px-1.5 py-0.5 text-[11px] font-bold rounded">
               REGIONAL
             </span>
           )}
           {product.rarity === 'limited' && (
-            <span className="bg-purple-500 text-white px-1.5 py-0.5 text-[10px] font-bold rounded">
+            <span className="bg-purple-500 text-white px-1.5 py-0.5 text-[11px] font-bold rounded">
               LIMITED
             </span>
           )}
@@ -72,7 +72,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   <span className="text-base font-black text-pink-400">
                     ${displayPrice.toFixed(2)}
                   </span>
-                  <span className="text-[10px] text-gray-500 line-through">
+                  <span className="text-[11px] text-gray-500 line-through">
                     ${product.compareAtPrice!.toFixed(2)}
                   </span>
                 </div>
@@ -86,14 +86,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAddToCart}
               className="p-1.5 bg-purple-600 hover:bg-pink-500 text-white rounded transition-colors"
-              title="Add to cart"
+              aria-label="Add to cart"
             >
               <ShoppingCart size={14} />
             </button>
           </div>
 
           {product.trackInventory && product.stock < 10 && (
-            <p className="mt-1 text-[10px] text-orange-400 font-medium">
+            <p className="mt-1 text-[11px] text-orange-400 font-medium">
               Only {product.stock} left
             </p>
           )}
