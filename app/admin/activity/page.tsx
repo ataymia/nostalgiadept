@@ -1,18 +1,9 @@
 'use client';
 
-import { Package, ShoppingCart, Tag, User, Settings } from 'lucide-react';
+import { Package, Clock } from 'lucide-react';
 
-// Mock activity data
-const mockActivities = [
-  { id: 1, type: 'product_update', user: 'Admin', description: 'Updated product "Retro Pixel Pet"', time: '2 minutes ago', icon: Package },
-  { id: 2, type: 'order_status', user: 'Admin', description: 'Order ND-001 marked as shipped', time: '15 minutes ago', icon: ShoppingCart },
-  { id: 3, type: 'discount_change', user: 'Admin', description: 'Created discount code NOSTALGIA10', time: '1 hour ago', icon: Tag },
-  { id: 4, type: 'settings_change', user: 'Admin', description: 'Updated shipping settings', time: '2 hours ago', icon: Settings },
-  { id: 5, type: 'product_update', user: 'Admin', description: 'Added new product "Mystery VHS 5-Pack"', time: '3 hours ago', icon: Package },
-  { id: 6, type: 'order_status', user: 'Admin', description: 'Order ND-002 marked as delivered', time: '5 hours ago', icon: ShoppingCart },
-  { id: 7, type: 'product_update', user: 'Admin', description: 'Updated inventory for "90s Candy Box"', time: '1 day ago', icon: Package },
-  { id: 8, type: 'user_action', user: 'Admin', description: 'Admin logged in', time: '1 day ago', icon: User },
-];
+// Activities will be populated from real data when available
+const activities: Array<{ id: number; type: string; user: string; description: string; time: string; icon: typeof Package }> = [];
 
 const typeColors: Record<string, string> = {
   product_update: 'bg-purple-100 text-purple-600',
@@ -53,22 +44,29 @@ export default function ActivityLogPage() {
       {/* Activity List */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="divide-y divide-gray-100">
-          {mockActivities.map(activity => {
-            const Icon = activity.icon;
-            return (
-              <div key={activity.id} className="p-4 hover:bg-gray-50 flex items-start gap-4">
-                <div className={`p-2 rounded-lg ${typeColors[activity.type]}`}>
-                  <Icon size={18} />
+          {activities.length > 0 ? (
+            activities.map(activity => {
+              const Icon = activity.icon;
+              return (
+                <div key={activity.id} className="p-4 hover:bg-gray-50 flex items-start gap-4">
+                  <div className={`p-2 rounded-lg ${typeColors[activity.type]}`}>
+                    <Icon size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-gray-900">{activity.description}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      by {activity.user} • {activity.time}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-gray-900">{activity.description}</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    by {activity.user} • {activity.time}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="p-8 text-center text-gray-500">
+              <Clock size={48} className="mx-auto mb-4 text-gray-300" />
+              <p>No activity yet. Actions will be logged here as you manage your store.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

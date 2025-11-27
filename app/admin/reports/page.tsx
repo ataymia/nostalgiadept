@@ -21,26 +21,26 @@ export default function ReportsPage() {
         <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-6 text-white">
           <DollarSign size={24} className="mb-2" />
           <p className="text-sm opacity-80">Total Revenue</p>
-          <p className="text-3xl font-bold">$12,450</p>
-          <p className="text-sm mt-2 opacity-80">+12% from last month</p>
+          <p className="text-3xl font-bold">--</p>
+          <p className="text-sm mt-2 opacity-80">No data yet</p>
         </div>
         <div className="bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl p-6 text-white">
           <ShoppingCart size={24} className="mb-2" />
           <p className="text-sm opacity-80">Total Orders</p>
-          <p className="text-3xl font-bold">142</p>
-          <p className="text-sm mt-2 opacity-80">+8% from last month</p>
+          <p className="text-3xl font-bold">--</p>
+          <p className="text-sm mt-2 opacity-80">No data yet</p>
         </div>
         <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-6 text-white">
           <TrendingUp size={24} className="mb-2" />
           <p className="text-sm opacity-80">Avg. Order Value</p>
-          <p className="text-3xl font-bold">$87.67</p>
-          <p className="text-sm mt-2 opacity-80">+3% from last month</p>
+          <p className="text-3xl font-bold">--</p>
+          <p className="text-sm mt-2 opacity-80">No data yet</p>
         </div>
         <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl p-6 text-white">
           <BarChart3 size={24} className="mb-2" />
           <p className="text-sm opacity-80">Conversion Rate</p>
-          <p className="text-3xl font-bold">3.2%</p>
-          <p className="text-sm mt-2 opacity-80">+0.5% from last month</p>
+          <p className="text-3xl font-bold">--</p>
+          <p className="text-sm mt-2 opacity-80">No data yet</p>
         </div>
       </div>
 

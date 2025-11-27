@@ -3,6 +3,11 @@
 import { Box, Gift, RefreshCw } from 'lucide-react';
 
 export default function BoxesPage() {
+  // Box counts will be populated from real data when available
+  const oneTimeBoxes = null;
+  const subscriptionBoxes = null;
+  const eventKits = null;
+
   return (
     <div className="space-y-6">
       <div>
@@ -14,17 +19,17 @@ export default function BoxesPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <Box size={24} className="text-purple-600 mb-2" />
           <p className="text-sm text-gray-500">One-Time Boxes</p>
-          <p className="text-2xl font-bold text-gray-900">8</p>
+          <p className="text-2xl font-bold text-gray-900">{oneTimeBoxes !== null ? oneTimeBoxes : '--'}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <RefreshCw size={24} className="text-cyan-600 mb-2" />
           <p className="text-sm text-gray-500">Subscription Boxes</p>
-          <p className="text-2xl font-bold text-gray-900">7</p>
+          <p className="text-2xl font-bold text-gray-900">{subscriptionBoxes !== null ? subscriptionBoxes : '--'}</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <Gift size={24} className="text-pink-600 mb-2" />
           <p className="text-sm text-gray-500">Event Kits</p>
-          <p className="text-2xl font-bold text-gray-900">5</p>
+          <p className="text-2xl font-bold text-gray-900">{eventKits !== null ? eventKits : '--'}</p>
         </div>
       </div>
 
