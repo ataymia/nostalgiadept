@@ -16,12 +16,20 @@ const categoryEmojis: Record<string, string> = {
   'the-vault': '🔐',
 };
 
+// Categories to highlight on the home page quick links
+const HIGHLIGHTED_CATEGORY_SLUGS = [
+  'pocket-tech-virtual-pets',
+  'candy-snacks-drinks',
+  'mystery-subscription-boxes',
+  'the-vault',
+];
+
 export default function Home() {
   const featuredProducts = getFeaturedProducts();
 
-  // Build category list for quick links (only show a few highlighted ones)
+  // Build category list for quick links (only show highlighted ones)
   const highlightedCategories = CATEGORIES
-    .filter(cat => ['pocket-tech-virtual-pets', 'candy-snacks-drinks', 'mystery-subscription-boxes', 'the-vault'].includes(cat.value))
+    .filter(cat => HIGHLIGHTED_CATEGORY_SLUGS.includes(cat.value))
     .map(cat => ({
       name: cat.label,
       href: `/category/${cat.value}`,

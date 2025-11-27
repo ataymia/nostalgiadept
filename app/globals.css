@@ -11,6 +11,8 @@
   --neon-green: #00ff00;
   --neon-orange: #ff6600;
   --brick-red: #8b0000;
+  --sidebar-width-collapsed: 60px;
+  --sidebar-width-expanded: 280px;
 }
 
 @theme inline {
@@ -166,7 +168,8 @@ body {
 .floating-shape {
   position: absolute;
   opacity: 0.6;
-  filter: blur(0.5px);
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .shape-triangle {
@@ -252,11 +255,11 @@ body {
 }
 
 .sidebar-menu.collapsed {
-  width: 60px;
+  width: var(--sidebar-width-collapsed);
 }
 
 .sidebar-menu.expanded {
-  width: 280px;
+  width: var(--sidebar-width-expanded);
 }
 
 .sidebar-menu-btn {

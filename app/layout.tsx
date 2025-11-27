@@ -21,10 +21,10 @@ export default function RootLayout({
         <SidebarMenu />
         <div className="relative z-10">
           <Header />
-          <main className="min-h-screen pl-[60px]">
+          <main className="min-h-screen" style={{ paddingLeft: 'var(--sidebar-width-collapsed)' }}>
             {children}
           </main>
-          <footer className="bg-black border-t-4 border-pink-500 py-8 mt-12 pl-[60px]">
+          <footer className="bg-black border-t-4 border-pink-500 py-8 mt-12" style={{ paddingLeft: 'var(--sidebar-width-collapsed)' }}>
             <div className="container mx-auto px-4 text-center">
               <p className="neon-text-cyan text-xl font-bold mb-2">
                 NOSTALGIA DEPT
