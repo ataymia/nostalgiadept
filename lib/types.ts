@@ -12,6 +12,17 @@ export interface Product {
   salePrice?: number;
   createdAt?: Date;
   updatedAt?: Date;
+  /** Whether this product is eligible for checkout upsell */
+  isCheckoutAddon?: boolean;
+}
+
+/**
+ * Upsell candidate with relevance scoring
+ */
+export interface UpsellCandidate {
+  product: Product;
+  relevanceScore: number;
+  effectivePrice: number;
 }
 
 export type ProductCategory =
