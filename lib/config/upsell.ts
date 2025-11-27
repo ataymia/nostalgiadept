@@ -119,13 +119,33 @@ const defaultRelevanceToggles: RelevanceToggles = {
 };
 
 /**
+ * Parse and validate integer environment variable with bounds checking
+ */
+function parseIntEnv(value: string | undefined, defaultValue: number, min: number, max: number): number {
+  if (!value) return defaultValue;
+  const parsed = parseInt(value, 10);
+  if (isNaN(parsed)) return defaultValue;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+/**
+ * Parse and validate float environment variable with bounds checking
+ */
+function parseFloatEnv(value: string | undefined, defaultValue: number, min: number, max: number): number {
+  if (!value) return defaultValue;
+  const parsed = parseFloat(value);
+  if (isNaN(parsed)) return defaultValue;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+/**
  * Default upsell configuration
- * Values can be overridden via environment variables
+ * Values can be overridden via environment variables with validation
  */
 export const defaultUpsellConfig: UpsellConfig = {
-  maxUpsellCart: parseInt(process.env.MAX_UPSELL_CART || '5', 10),
-  maxUpsellCheckout: parseInt(process.env.MAX_UPSELL_CHECKOUT || '3', 10),
-  cheapBandDelta: parseFloat(process.env.CHEAP_BAND_DELTA || '3.00'),
+  maxUpsellCart: parseIntEnv(process.env.MAX_UPSELL_CART, 5, 1, 20),
+  maxUpsellCheckout: parseIntEnv(process.env.MAX_UPSELL_CHECKOUT, 3, 1, 10),
+  cheapBandDelta: parseFloatEnv(process.env.CHEAP_BAND_DELTA, 3.00, 0, 50),
   enableUpsells: process.env.ENABLE_UPSELLS !== 'false',
   relevanceToggles: defaultRelevanceToggles,
   relevanceRules: defaultRelevanceRules,

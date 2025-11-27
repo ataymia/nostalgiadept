@@ -3,7 +3,7 @@
 import { Product } from '@/lib/types';
 import { useCartStore } from '@/lib/store';
 import { Plus, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface UpsellStripProps {
   products: Product[];
@@ -11,10 +11,26 @@ interface UpsellStripProps {
   subtext?: string;
 }
 
+/**
+ * Get product description with fallback
+ */
+function getProductDescription(product: Product): string {
+  return product.descriptionShort || product.description || '';
+}
+
 export default function UpsellStrip({ products, heading, subtext }: UpsellStripProps) {
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set());
+  const timeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+      timeoutsRef.current.clear();
+    };
+  }, []);
 
   // Filter out products already in cart
   const cartProductIds = new Set(cartItems.map((item) => item.product.id));
@@ -28,14 +44,23 @@ export default function UpsellStrip({ products, heading, subtext }: UpsellStripP
     addItem(product, 1);
     setAddedItems((prev) => new Set([...prev, product.id]));
     
+    // Clear any existing timeout for this product
+    const existingTimeout = timeoutsRef.current.get(product.id);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+    
     // Reset the "added" state after 2 seconds
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setAddedItems((prev) => {
         const next = new Set(prev);
         next.delete(product.id);
         return next;
       });
+      timeoutsRef.current.delete(product.id);
     }, 2000);
+    
+    timeoutsRef.current.set(product.id, timeout);
   };
 
   return (
@@ -52,7 +77,7 @@ export default function UpsellStrip({ products, heading, subtext }: UpsellStripP
       <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
         {availableProducts.map((product) => {
           const isAdded = addedItems.has(product.id);
-          const description = product.descriptionShort || product.description || '';
+          const description = getProductDescription(product);
           
           return (
             <div

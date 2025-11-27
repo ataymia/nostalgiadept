@@ -13,19 +13,22 @@ import { getUpsellConfig, type UpsellConfig, type RelevanceRule } from '../confi
 export type UpsellContext = 'cart' | 'checkout';
 
 /**
- * Get the effective price for a product (compareAtPrice logic or regular price)
+ * Get the effective price for a product.
+ * For upsell purposes, we use the actual selling price (product.price).
+ * Note: compareAtPrice is used for display purposes only (showing crossed-out original price).
  */
 function getEffectivePrice(product: Product): number {
   return product.price;
 }
 
 /**
- * Check if a product matches any keywords in its name or description
+ * Check if a product matches any keywords in its name or description.
+ * Pre-converts keywords to lowercase for efficiency.
  */
 function matchesKeywords(product: Product, keywords?: string[]): boolean {
   if (!keywords || keywords.length === 0) return false;
   
-  const searchText = `${product.name} ${product.descriptionShort} ${product.descriptionLong}`.toLowerCase();
+  const searchText = `${product.name} ${product.descriptionShort || ''} ${product.descriptionLong || ''}`.toLowerCase();
   return keywords.some((keyword) => searchText.includes(keyword.toLowerCase()));
 }
 
