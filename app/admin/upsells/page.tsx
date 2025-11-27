@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { products as productData, getCheckoutAddons } from '@/lib/products';
-import { Product, CATEGORIES, getCategoryLabel } from '@/lib/types';
-import { defaultUpsellConfig, getUpsellConfig } from '@/lib/config/upsell';
+import { products as productData } from '@/lib/products';
+import { Product, CATEGORIES } from '@/lib/types';
+import { defaultUpsellConfig } from '@/lib/config/upsell';
 import { getUpsellProducts } from '@/lib/services/upsellService';
 import { Gift, Settings, Eye, Check, X, Play, RefreshCw } from 'lucide-react';
 

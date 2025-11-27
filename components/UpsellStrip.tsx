@@ -26,9 +26,10 @@ export default function UpsellStrip({ products, heading, subtext }: UpsellStripP
 
   // Cleanup timeouts on unmount
   useEffect(() => {
+    const timeoutsMap = timeoutsRef.current;
     return () => {
-      timeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
-      timeoutsRef.current.clear();
+      timeoutsMap.forEach((timeout) => clearTimeout(timeout));
+      timeoutsMap.clear();
     };
   }, []);
 

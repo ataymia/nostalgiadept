@@ -1,6 +1,6 @@
 'use client';
 
-import { Tag, Plus, Percent, Truck, DollarSign } from 'lucide-react';
+import { Plus, Percent, Truck, DollarSign } from 'lucide-react';
 import { useState } from 'react';
 
 export default function DiscountsPage() {

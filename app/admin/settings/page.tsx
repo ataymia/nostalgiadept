@@ -1,6 +1,6 @@
 'use client';
 
-import { Settings, Store, Truck, CreditCard, Mail, Bell, Users, Globe } from 'lucide-react';
+import { Store, Truck, CreditCard, Mail, Bell, Users, Globe } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
