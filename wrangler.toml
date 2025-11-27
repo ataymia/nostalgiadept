@@ -1,0 +1,5 @@
+# Cloudflare Pages configuration
+# This file tells Cloudflare Pages where to find the static build output
+
+name = "nostalgiadept"
+pages_build_output_dir = "out"

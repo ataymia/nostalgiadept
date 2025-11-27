@@ -57,6 +57,15 @@ The site builds to the `out/` directory as static HTML. Deploy to:
 - AWS S3
 - Any static file host
 
+#### Cloudflare Pages Deployment
+
+The repository includes a `wrangler.toml` configuration file for Cloudflare Pages. When connecting your repository to Cloudflare Pages:
+
+1. Connect your GitHub repository to Cloudflare Pages
+2. Set the **Build command** to: `npm run build`
+3. Set the **Build output directory** to: `out`
+4. The `wrangler.toml` file will automatically configure Cloudflare Pages with the correct output directory
+
 ## 🎯 Project Structure
 
 ```
