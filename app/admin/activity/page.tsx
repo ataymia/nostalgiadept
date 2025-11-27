@@ -1,6 +1,6 @@
 'use client';
 
-import { ClipboardList, Package, ShoppingCart, Tag, User, Settings } from 'lucide-react';
+import { Package, ShoppingCart, Tag, User, Settings } from 'lucide-react';
 
 // Mock activity data
 const mockActivities = [

@@ -1,6 +1,9 @@
 /**
  * Upsell feature configuration
  * Configuration for the checkout upsell (Checkout Candy Lane) feature
+ * 
+ * NOTE: Relevance rules are also defined in lib/config/relevanceRules.ts
+ * for shared access. This file maintains its own copy for backward compatibility.
  */
 
 import type { ProductCategory, ProductSubcategory } from '../types';

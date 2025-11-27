@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, Image, Layout, Link2 } from 'lucide-react';
+import { FileText, Image as ImageIcon, Layout, Link2 } from 'lucide-react';
 
 export default function ContentPage() {
   return (
@@ -12,7 +12,7 @@ export default function ContentPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
-          <Image size={32} className="text-pink-600 mb-3" />
+          <ImageIcon size={32} className="text-pink-600 mb-3" />
           <h3 className="font-bold text-gray-900">Hero Banners</h3>
           <p className="text-sm text-gray-500 mt-1">Manage homepage hero images</p>
         </div>

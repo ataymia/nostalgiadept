@@ -5,7 +5,6 @@ import {
   DollarSign, 
   ShoppingCart, 
   Package, 
-  Users,
   TrendingUp,
   AlertTriangle,
   ArrowUpRight,
@@ -182,7 +181,7 @@ export default function AdminDashboard() {
                 key={product.id}
                 product={product}
                 rank={index + 1}
-                stat={`${Math.floor(Math.random() * 50 + 10)} sold`}
+                stat={`${Math.floor((product.stock % 50) + 10)} sold`}
               />
             ))}
           </div>

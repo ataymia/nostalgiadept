@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import { products as productData } from '@/lib/products';
 import { Product, CATEGORIES, ProductCategory, ProductSubcategory, getCategoryLabel, getSubcategoriesForCategory } from '@/lib/types';
 import { Pencil, Trash2, Plus, Search, X, Check, Filter } from 'lucide-react';
-import Link from 'next/link';
 
 // Default form data for new products
 const getDefaultFormData = (): Partial<Product> => ({

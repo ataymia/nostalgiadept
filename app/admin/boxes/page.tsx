@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Gift, Calendar, RefreshCw } from 'lucide-react';
+import { Box, Gift, RefreshCw } from 'lucide-react';
 
 export default function BoxesPage() {
   return (
