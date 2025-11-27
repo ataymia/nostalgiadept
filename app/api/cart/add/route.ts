@@ -20,6 +20,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+// Using lib/products which provides the shared product catalog
+// For server-only code, use backend/services/productService instead
 import { getProductById } from '@/lib/products';
 
 interface CartAddRequest {

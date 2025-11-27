@@ -90,7 +90,11 @@ export function getProductsBySubcategory(subcategory: string): Product[] {
  * Get checkout addon products (for upsell)
  */
 export function getCheckoutAddons(): Product[] {
-  return getAllProducts().filter(p => p.isCheckoutAddon && p.isActive && p.stock > 0);
+  return getAllProducts().filter(p => 
+    p.isCheckoutAddon && 
+    p.isActive && 
+    (!p.trackInventory || p.stock > 0)
+  );
 }
 
 /**

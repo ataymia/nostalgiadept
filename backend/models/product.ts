@@ -135,6 +135,15 @@ export interface ProductInput {
 }
 
 /**
+ * Default values for product fields
+ */
+export const PRODUCT_DEFAULTS = {
+  STOCK: 50,
+  REORDER_THRESHOLD: 10,
+  PLACEHOLDER_IMAGE: '/images/products/placeholder.jpg',
+} as const;
+
+/**
  * Helper to generate a slug from a name
  */
 export function generateSlug(name: string): string {
@@ -158,13 +167,13 @@ export function migrateToProduct(data: Record<string, unknown>): Partial<Product
     subcategory: (data.subcategory as ProductSubcategory) || 'arcade-prizes-party-toys',
     descriptionShort: (data.descriptionShort as string) || (data.shortDescription as string) || (data.description as string) || '',
     descriptionLong: (data.descriptionLong as string) || (data.description as string) || '',
-    images: (data.images as string[]) || ['/images/products/placeholder.jpg'],
+    images: (data.images as string[]) || [PRODUCT_DEFAULTS.PLACEHOLDER_IMAGE],
     price: (data.price as number) || 0,
     cost: data.cost as number | undefined,
     compareAtPrice: (data.compareAtPrice as number) || (data.originalPrice as number) || undefined,
     trackInventory: (data.trackInventory as boolean) ?? true,
-    stock: (data.stock as number) ?? (data.inventory as number) ?? 50,
-    reorderThreshold: (data.reorderThreshold as number) || 10,
+    stock: (data.stock as number) ?? (data.inventory as number) ?? PRODUCT_DEFAULTS.STOCK,
+    reorderThreshold: (data.reorderThreshold as number) || PRODUCT_DEFAULTS.REORDER_THRESHOLD,
     isActive: (data.isActive as boolean) ?? (data.inStock as boolean) ?? true,
     isCheckoutAddon: (data.isCheckoutAddon as boolean) ?? false,
     rarity: (data.rarity as ProductRarity) || 'common',

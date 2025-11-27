@@ -1,6 +1,10 @@
 /**
  * Upsell Service (Backend)
  * Backend service implementing the checkout upsell selection algorithm
+ * 
+ * NOTE: Relevance rules are also defined in lib/config/relevanceRules.ts
+ * for shared access. This service maintains its own copy to avoid
+ * frontend/backend import issues.
  */
 
 import type { Product, ProductCategory, ProductSubcategory } from '../models/product';
