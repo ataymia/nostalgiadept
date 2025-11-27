@@ -107,3 +107,180 @@ body {
     2px 2px 0 #000,
     0 0 15px rgba(255, 0, 255, 0.4);
 }
+
+/* Animated Floating Shapes - Fresh Prince/Graffiti 90s Style */
+@keyframes float-shape-1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(50px, -30px) rotate(90deg); }
+  50% { transform: translate(20px, 40px) rotate(180deg); }
+  75% { transform: translate(-40px, 10px) rotate(270deg); }
+}
+
+@keyframes float-shape-2 {
+  0%, 100% { transform: translate(0, 0) rotate(45deg); }
+  33% { transform: translate(-60px, 50px) rotate(135deg); }
+  66% { transform: translate(40px, -40px) rotate(225deg); }
+}
+
+@keyframes float-shape-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, 60px) scale(1.2); }
+}
+
+@keyframes float-shape-4 {
+  0%, 100% { transform: translate(0, 0) rotate(-15deg); }
+  50% { transform: translate(-80px, 30px) rotate(15deg); }
+}
+
+@keyframes zigzag {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(20px) translateY(-10px); }
+  50% { transform: translateX(0) translateY(-20px); }
+  75% { transform: translateX(-20px) translateY(-10px); }
+}
+
+.animated-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.animated-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 0, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 0, 0.1) 0%, transparent 40%);
+}
+
+.floating-shape {
+  position: absolute;
+  opacity: 0.6;
+  filter: blur(0.5px);
+}
+
+.shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-bottom: 70px solid var(--neon-pink);
+  animation: float-shape-1 15s ease-in-out infinite;
+}
+
+.shape-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+  animation: float-shape-2 20s ease-in-out infinite;
+}
+
+.shape-square {
+  width: 50px;
+  height: 50px;
+  background: var(--neon-yellow);
+  animation: float-shape-3 12s ease-in-out infinite;
+}
+
+.shape-star {
+  width: 40px;
+  height: 40px;
+  background: var(--neon-orange);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: float-shape-4 18s ease-in-out infinite;
+}
+
+.shape-zigzag {
+  width: 80px;
+  height: 20px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--neon-pink),
+    var(--neon-pink) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  clip-path: polygon(0 100%, 10% 0, 20% 100%, 30% 0, 40% 100%, 50% 0, 60% 100%, 70% 0, 80% 100%, 90% 0, 100% 100%);
+  animation: zigzag 8s ease-in-out infinite;
+}
+
+.shape-diamond {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(45deg, var(--neon-pink), var(--neon-cyan));
+  transform: rotate(45deg);
+  animation: float-shape-1 22s ease-in-out infinite reverse;
+}
+
+.shape-donut {
+  width: 50px;
+  height: 50px;
+  border: 8px solid var(--neon-green);
+  border-radius: 50%;
+  animation: float-shape-2 16s ease-in-out infinite reverse;
+}
+
+/* Graffiti spray effect */
+.graffiti-splash {
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(ellipse at center, var(--neon-pink) 0%, transparent 70%);
+  filter: blur(20px);
+  opacity: 0.3;
+  animation: float-shape-3 25s ease-in-out infinite;
+}
+
+/* Sidebar menu styles */
+.sidebar-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+  transition: width 0.3s ease-in-out;
+}
+
+.sidebar-menu.collapsed {
+  width: 60px;
+}
+
+.sidebar-menu.expanded {
+  width: 280px;
+}
+
+.sidebar-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.sidebar-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu.collapsed .sidebar-menu-text {
+  opacity: 0;
+  width: 0;
+}
+
+.sidebar-menu.expanded .sidebar-menu-text {
+  opacity: 1;
+  width: auto;
+}

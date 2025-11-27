@@ -19,9 +19,9 @@ const categoryEmojis: Record<string, string> = {
 export default function Home() {
   const featuredProducts = getFeaturedProducts();
 
-  // Build category list for grid (excluding checkout-candy-lane)
-  const displayCategories = CATEGORIES
-    .filter(cat => cat.value !== 'checkout-candy-lane')
+  // Build category list for quick links (only show a few highlighted ones)
+  const highlightedCategories = CATEGORIES
+    .filter(cat => ['pocket-tech-virtual-pets', 'candy-snacks-drinks', 'mystery-subscription-boxes', 'the-vault'].includes(cat.value))
     .map(cat => ({
       name: cat.label,
       href: `/category/${cat.value}`,
@@ -30,13 +30,17 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Hero Section */}
-      <div className="mb-12 relative bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-400 rounded-2xl border-4 border-black shadow-[10px_10px_0_#000] p-8 md:p-12 overflow-hidden">
-        <div className="relative z-10">
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-lg">
+      {/* Hero Section - More Fresh Prince/Graffiti style */}
+      <div className="mb-12 relative overflow-hidden rounded-2xl border-4 border-black shadow-[10px_10px_0_#000]">
+        {/* Graffiti-style gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-cyan-400" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50" />
+        
+        <div className="relative z-10 p-8 md:p-12">
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-lg" style={{ textShadow: '4px 4px 0 #000, -2px -2px 0 #ff00ff' }}>
             TOTALLY RAD 90s VIBES! 🎉
           </h1>
-          <p className="text-xl md:text-2xl text-white font-bold mb-6 drop-shadow">
+          <p className="text-xl md:text-2xl text-white font-bold mb-6 drop-shadow" style={{ textShadow: '2px 2px 0 #000' }}>
             Step into the time machine and grab all your favorite retro gear!
           </p>
           <Link
@@ -46,15 +50,41 @@ export default function Home() {
             SHOP NOW →
           </Link>
         </div>
-        <div className="absolute top-0 right-0 text-[200px] opacity-20">
-          🎮
-        </div>
+        
+        {/* Decorative shapes */}
+        <div className="absolute top-4 right-4 text-[120px] opacity-30 transform rotate-12">🎮</div>
+        <div className="absolute bottom-4 right-24 text-[80px] opacity-20 transform -rotate-12">📼</div>
+        <div className="absolute top-1/2 right-8 w-16 h-16 bg-cyan-400 rounded-full opacity-40" />
+        <div className="absolute bottom-8 right-48 w-12 h-12 bg-yellow-400 transform rotate-45 opacity-40" />
       </div>
+
+      {/* Quick Category Links - Sleek horizontal scroll */}
+      <section className="mb-10">
+        <div className="flex items-center gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          {highlightedCategories.map((category) => (
+            <Link
+              key={category.href}
+              href={category.href}
+              className="flex-shrink-0 flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full border-3 border-black shadow-[3px_3px_0_#000] hover:shadow-[5px_5px_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+            >
+              <span className="text-2xl">{category.emoji}</span>
+              <span className="whitespace-nowrap">{category.name}</span>
+            </Link>
+          ))}
+          <Link
+            href="/sale"
+            className="flex-shrink-0 flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black rounded-full border-3 border-black shadow-[3px_3px_0_#000] hover:shadow-[5px_5px_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+          >
+            <span className="text-2xl">🏷️</span>
+            <span className="whitespace-nowrap">SALE</span>
+          </Link>
+        </div>
+      </section>
 
       {/* Featured Products */}
       <section className="mb-12">
         <div className="mb-6 bg-gradient-to-r from-pink-500 to-cyan-400 rounded-lg border-4 border-black shadow-[5px_5px_0_#000] p-4">
-          <h2 className="text-3xl md:text-4xl font-black text-white text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-white text-center" style={{ textShadow: '2px 2px 0 #000' }}>
             🔥 FEATURED PRODUCTS 🔥
           </h2>
         </div>
@@ -66,37 +96,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Category Grid */}
-      <section>
-        <div className="mb-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-lg border-4 border-black shadow-[5px_5px_0_#000] p-4">
-          <h2 className="text-3xl md:text-4xl font-black text-black text-center">
-            ⚡ SHOP BY CATEGORY ⚡
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayCategories.map((category) => (
-            <Link
-              key={category.href}
-              href={category.href}
-              className="group relative bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg border-4 border-black shadow-[5px_5px_0_#000] hover:shadow-[8px_8px_0_#000] hover:translate-x-[-3px] hover:translate-y-[-3px] transition-all p-8 text-center overflow-hidden"
-            >
-              <div className="text-6xl mb-4">{category.emoji}</div>
-              <h3 className="text-2xl font-black text-white drop-shadow-lg">
-                {category.name}
-              </h3>
-            </Link>
-          ))}
-          {/* Sale link */}
-          <Link
-            href="/sale"
-            className="group relative bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg border-4 border-black shadow-[5px_5px_0_#000] hover:shadow-[8px_8px_0_#000] hover:translate-x-[-3px] hover:translate-y-[-3px] transition-all p-8 text-center overflow-hidden"
-          >
-            <div className="text-6xl mb-4">🏷️</div>
-            <h3 className="text-2xl font-black text-black drop-shadow-lg">
-              Sale
-            </h3>
-          </Link>
+      {/* Browse More CTA */}
+      <section className="text-center">
+        <p className="text-gray-400 mb-4">Want to see more? Check out all our categories in the menu! 👈</p>
+        <div className="inline-flex items-center gap-2 px-6 py-3 bg-purple-800 text-purple-300 rounded-lg border-2 border-purple-600">
+          <span>←</span>
+          <span className="font-bold">Hover over the side menu to explore</span>
         </div>
       </section>
     </div>
