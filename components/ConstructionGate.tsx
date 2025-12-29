@@ -42,7 +42,11 @@ export default function ConstructionGate({ children }: { children: React.ReactNo
 
   // Show loading state while checking authentication
   if (isLoading) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-pink-800 to-orange-700">
+        <div className="text-white text-2xl font-bold">Loading...</div>
+      </div>
+    );
   }
 
   // Show construction gate if not authenticated
