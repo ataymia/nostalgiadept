@@ -13,9 +13,12 @@ export default function ConstructionGate({ children }: { children: React.ReactNo
 
   useEffect(() => {
     // Check if user has already authenticated
-    const hasAccess = sessionStorage.getItem(STORAGE_KEY) === 'true';
-    setIsAuthenticated(hasAccess);
-    setIsLoading(false);
+    const checkAuth = () => {
+      const hasAccess = sessionStorage.getItem(STORAGE_KEY) === 'true';
+      setIsAuthenticated(hasAccess);
+      setIsLoading(false);
+    };
+    checkAuth();
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -48,7 +51,7 @@ export default function ConstructionGate({ children }: { children: React.ReactNo
               UNDER CONSTRUCTION
             </h1>
             <p className="text-xl font-bold text-black">
-              We're not ready yet!
+              We&apos;re not ready yet!
             </p>
           </div>
 
