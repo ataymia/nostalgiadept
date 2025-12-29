@@ -14,8 +14,11 @@ export default function ConstructionGate({ children }: { children: React.ReactNo
   useEffect(() => {
     // Check if user has already authenticated
     const checkAuth = () => {
-      const hasAccess = sessionStorage.getItem(STORAGE_KEY) === 'true';
-      setIsAuthenticated(hasAccess);
+      // Check if we're in the browser (not SSR)
+      if (typeof window !== 'undefined') {
+        const hasAccess = sessionStorage.getItem(STORAGE_KEY) === 'true';
+        setIsAuthenticated(hasAccess);
+      }
       setIsLoading(false);
     };
     checkAuth();
@@ -26,7 +29,10 @@ export default function ConstructionGate({ children }: { children: React.ReactNo
     setError('');
 
     if (password === CONSTRUCTION_PASSWORD) {
-      sessionStorage.setItem(STORAGE_KEY, 'true');
+      // Store authentication in sessionStorage (only in browser)
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem(STORAGE_KEY, 'true');
+      }
       setIsAuthenticated(true);
     } else {
       setError('Incorrect password. Try again!');
